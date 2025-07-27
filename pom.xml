@@ -6,14 +6,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.3</version>
+		<version>3.5.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.github.singhalmradul</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.1.0</version>
 	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Scala Demo Project</description>
 	<url />
 	<licenses>
 		<license />
@@ -115,13 +115,28 @@
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
 		<plugins>
 			<plugin>
+				<groupId>org.graalvm.buildtools</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<source>21</source>
+					<target>21</target>
+					<compilerArgs>
+						<arg>-Xplugin:semanticdb -sourceroot:${project.basedir}
+							-targetroot:${project.build.outputDirectory}</arg>
+					</compilerArgs>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+						</path>
+						<path>
+							<groupId>com.sourcegraph</groupId>
+							<artifactId>semanticdb-javac</artifactId>
+							<version>0.11.0</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
@@ -142,6 +157,19 @@
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
 				<version>4.9.5</version>
+				<configuration>
+					<sourceDir>src/main/scala</sourceDir>
+					<testSourceDir>src/test/scala</testSourceDir>
+					<args>
+						<arg>-Xsemanticdb</arg>
+						<arg>-sourceroot</arg>
+						<arg>${project.basedir}</arg>
+					</args>
+					<jvmArgs>
+						<jvmArg>-Xms64m</jvmArg>
+						<jvmArg>-Xmx1024m</jvmArg>
+					</jvmArgs>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -160,7 +188,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.5.3</version>
 				<configuration>
 					<!-- Enable tests to run JUnit tests -->
 					<skipTests>false</skipTests>
